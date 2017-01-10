@@ -27,7 +27,7 @@ showStatus SecondPlayerPlaying = "Second Player Playing\n"
 showPiece :: Piece -> String
 showPiece FirstPlayer = "X"
 showPiece SecondPlayer = "O"
-showPiece Empty = " "
+showPiece Empty = "."
 
 initialGame :: Game
 initialGame = Game pieces FirstPlayerPlaying
