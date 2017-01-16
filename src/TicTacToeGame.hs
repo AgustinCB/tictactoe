@@ -1,9 +1,10 @@
-module TicTacToeGame (Game, IA, Command, Position, showGameStatus, showGame, checkFinished, initialGame, updateStatus, updateGame, commandParser) where
+module TicTacToeGame (Game, Command, Position, showGameStatus, showGame,
+        checkFinished, initialGame, updateStatus, updateGame, commandParser) where
 
 import Data.List
 import ArrayHelpers (replace2D)
 import IOHelpers (toInt)
-import Text.ParserCombinators.Parsec (parse, Parser)
+import Text.ParserCombinators.Parsec (Parser)
 import Text.Parsec.Char
 
 data Game = Game [[Piece]] Status
@@ -11,7 +12,9 @@ data Status = FirstPlayerPlaying | SecondPlayerPlaying | FirstPlayerWon | Second
 data Piece = FirstPlayer | SecondPlayer | Empty
 data Position = Position Int Int
 type Command = Maybe Position 
-type IA = String -> Command
+
+-- getEmptyPositions :: Game -> [Position]
+-- getEmptyPositions (Game pices _) = (map () pieces)
 
 showGameStatus :: Game -> String
 showGameStatus (Game _ status) = showStatus status
