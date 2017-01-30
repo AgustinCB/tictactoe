@@ -2,7 +2,6 @@ module TicTacToe (startGame) where
 
 import TicTacToeGame
 import TicTacToeIA
-import IOHelpers (getUserInput)
 
 import Control.Monad.IO.Class (liftIO)
 import System.Exit (exitSuccess)
@@ -13,20 +12,29 @@ checkExit game = case checkFinished game of
   True -> putStrLn (showGameStatus game) >> exitSuccess
   False -> return ()
 
-printRepl :: Game -> IO String
+printRepl :: Game -> IO ()
 printRepl game = do
   putStrLn (showGame game)
   hFlush stdout
-  getUserInput
 
-getMovements :: Game -> IA
-getMovements _ = humanPlayer
+getMovements :: Game -> [IA] -> Command
+getMovements game ias = (getPlayerMovement game ias)
 
-run :: Game -> IO ()
-run game = do
+getIA :: String -> IA
+getIA "--human" = humanPlayer
+getIA "--random" = randomPlayer
+
+getIAs :: [String] -> [IA]
+getIAs [] = [humanPlayer humanPlayer]
+getIAs (first:second:xs) = [(getIA first) (getIA second)]
+getIAs (second:xs) = [humanPlayer (getIA second)]
+
+
+run :: [IA] -> Game -> IO ()
+run ias game = do
       checkExit game
-      inp <- printRepl game
-      run $ updateStatus $ updateGame ((getMovements game) inp) game
+      printRepl game
+      run ias $ updateStatus $ updateGame (getMovements game ias) game
 
-startGame :: IO()
-startGame = run initialGame
+startGame :: [String] -> IO()
+startGame args = run (getIAs args) initialGame

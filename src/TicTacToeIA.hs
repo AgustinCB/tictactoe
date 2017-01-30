@@ -1,11 +1,11 @@
 module TicTacToeIA(IA, humanPlayer) where
 
 import TicTacToeGame
-import Text.ParserCombinators.Parsec (parse)
+import IOHelpers (getUserInput)
+import ArrayHelpers (pick)
 
 import Data.Char (toLower)
-
-type IA = String -> Command
+import Text.ParserCombinators.Parsec (parse)
 
 lowercase :: String -> String
 lowercase = map toLower
@@ -15,5 +15,8 @@ parseCommand inp = case (parse commandParser "" (lowercase inp)) of
   Left _ -> Nothing
   Right position -> Just position
 
-humanPlayer :: IA
-humanPlayer = parseCommand
+humanPlayer :: Game -> Command
+humanPlayer _ = getUserInput >>= parseCommand
+
+randomPlayer :: IA
+randomPlayer game = Just (do (pick (getEmptyPositions game)))
