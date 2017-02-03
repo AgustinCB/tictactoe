@@ -3,7 +3,6 @@ module TicTacToe (startGame) where
 import TicTacToeGame
 import TicTacToeIA
 
-import Control.Monad.IO.Class (liftIO)
 import System.Exit (exitSuccess)
 import System.IO (hFlush, stdout, hSetBuffering, stdin, BufferMode(NoBuffering))
 
