@@ -1,5 +1,5 @@
-module TicTacToeGame (Game, Command, Position, showGameStatus, showGame, getEmptyPositions,
-        checkFinished, initialGame, updateStatus, updateGame, commandParser, IA) where
+module TicTacToeGame (Game, Command, Position, showGameStatus, showGame, getPossibleCommands,
+        checkFinished, initialGame, updateStatus, updateGame, commandParser, getPlayerMovement, IA) where
 
 import Data.List
 import Data.Maybe (catMaybes)
@@ -10,7 +10,7 @@ import Text.Parsec.Char
 
 data Game = Game [[Piece]] Status
 data Status = FirstPlayerPlaying | SecondPlayerPlaying | FirstPlayerWon | SecondPlayerWon
-type IA = Game -> Command
+type IA = Game -> IO Command
 data Piece = FirstPlayer | SecondPlayer | Empty
 data Position = Position Int Int
 type Command = Maybe Position 
@@ -25,6 +25,9 @@ getPositions commands = (catMaybes commands)
 getEmptyPositions :: Game -> [Position]
 getEmptyPositions (Game pieces _) =
   (getPositions (concatMap id (mapInd (\row x -> mapInd (\piece y -> (getPosition piece x y)) row) pieces)))
+
+getPossibleCommands :: Game -> [Command]
+getPossibleCommands game = map Just $ getEmptyPositions game
 
 showGameStatus :: Game -> String
 showGameStatus (Game _ status) = showStatus status
@@ -58,9 +61,9 @@ initialGame = Game pieces FirstPlayerPlaying
 setPosition :: Position -> [[Piece]] -> Piece -> [[Piece]]
 setPosition (Position x y) pieces piece = replace2D (const piece) x y pieces
 
-getPlayerMovements :: Game -> [IA] -> Command
-getPlayerMovements game@(Game pieces FirstPlayerPlaying) ias = (ias !! 0) game
-getPlayerMovements game@(Game pieces SecondPlayerPlaying) ias = (ias !! 1) game
+getPlayerMovement :: Game -> [IA] -> IO Command
+getPlayerMovement game@(Game pieces FirstPlayerPlaying) ias = (ias !! 0) game
+getPlayerMovement game@(Game pieces SecondPlayerPlaying) ias = (ias !! 1) game
 
 updateGame :: Command -> Game -> Game
 updateGame Nothing game = game

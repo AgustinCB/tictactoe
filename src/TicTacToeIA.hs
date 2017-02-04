@@ -1,4 +1,4 @@
-module TicTacToeIA(IA, humanPlayer) where
+module TicTacToeIA(IA, humanPlayer, randomPlayer) where
 
 import TicTacToeGame
 import IOHelpers (getUserInput)
@@ -11,13 +11,15 @@ import Text.ParserCombinators.Parsec (parse)
 lowercase :: String -> String
 lowercase = map toLower
 
-parseCommand :: String -> Command
-parseCommand inp = case (parse commandParser "" (lowercase inp)) of
-  Left _ -> Nothing
-  Right position -> Just position
+parseCommand :: IO String -> IO Command
+parseCommand inp = do
+  userInp <- inp
+  return (case (parse commandParser "" (lowercase userInp)) of
+    Left _ -> Nothing
+    Right position -> Just position)
 
-humanPlayer :: Game -> Command
-humanPlayer _ = parseCommand (liftIO getUserInput)
+humanPlayer :: IA
+humanPlayer _ = parseCommand getUserInput
 
 randomPlayer :: IA
-randomPlayer game = Just (do (pick (getEmptyPositions game)))
+randomPlayer game = (pick (getPossibleCommands game))
